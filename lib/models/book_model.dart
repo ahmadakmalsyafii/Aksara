@@ -1,10 +1,14 @@
 class BookModel {
   final String id;
+  final String penulis;
   final String judul;
   final String penerbit;
   final String tahun;
   final String kelas;
   final String coverUrl;
+  final String isbn;
+  final String deskripsi;
+  final int halaman;
   final int harga;
   final List<String> kategori;
 
@@ -15,8 +19,13 @@ class BookModel {
     required this.tahun,
     required this.kelas,
     required this.coverUrl,
-    required this.kategori,
     required this.harga,
+    required this.deskripsi,
+    required this.isbn,
+    required this.halaman,
+    required this.penulis,
+    required this.kategori,
+
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json, String id) {
@@ -28,6 +37,10 @@ class BookModel {
       kelas: json['kelas'] ?? '',
       coverUrl: json['coverUrl'] ?? '',
       harga: json['harga'] ?? '',
+      penulis: json['penulis'] ?? '',
+      halaman: json['halaman'] ?? '',
+      isbn: json['isbn'] ?? '',
+      deskripsi: json['deskripsi'] ?? '',
       kategori: List<String>.from(json['kategori'] ?? []),
     );
   }
@@ -40,6 +53,10 @@ class BookModel {
       'kelas': kelas,
       'coverUrl': coverUrl,
       'harga':harga,
+      'deskripsi': deskripsi,
+      'isbn': isbn,
+      'halaman': halaman,
+      'penulis': penulis,
       'kategori': kategori,
     };
   }

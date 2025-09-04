@@ -1,6 +1,7 @@
 import 'package:aksara/firebase_options.dart';
 import 'package:aksara/views/auth/login_page.dart';
 import 'package:aksara/views/home/home_page.dart';
+import 'package:aksara/views/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasData) {
-            return HomePage();
+            return MainPage();
           }
           return const LoginPage();
         },

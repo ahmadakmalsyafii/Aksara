@@ -1,6 +1,9 @@
+// lib/views/saloka/saloka_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:aksara/models/book_model.dart';
 import 'package:aksara/services/book_service.dart';
+import 'package:aksara/widgets/book_card_saloka.dart'; // Import widget baru
 
 class SalokaPage extends StatelessWidget {
   const SalokaPage({super.key});
@@ -70,63 +73,12 @@ class SalokaPage extends StatelessWidget {
                       crossAxisCount: 2,
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
-                      childAspectRatio: 0.65,
+                      childAspectRatio: 0.6, // Sesuaikan aspect ratio jika perlu
                     ),
                     itemBuilder: (context, index) {
                       final book = books[index];
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 3,
-                              offset: const Offset(0, 2),
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Gambar Buku
-                            ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                              child: Image.network(
-                                book.coverUrl,
-                                height: 150,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    book.judul,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    book.penerbit,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Rp. ${book.harga.toString()}',
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      );
+                      // Ganti Container dengan widget BookCardSaloka
+                      return BookCardSaloka(book: book);
                     },
                   );
                 },

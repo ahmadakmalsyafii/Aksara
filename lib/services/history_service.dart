@@ -32,4 +32,14 @@ class HistoryService {
 
     return snap.docs.map((d) => HistoryModel.fromJson(d.data(), d.id)).toList();
   }
+
+  Stream<List<HistoryModel>> getHistoryStream() {
+    return _db
+        .collection("users")
+        .doc(uid)
+        .collection("history")
+        .orderBy("finishedAt", descending: true)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) => HistoryModel.fromJson(d.data(), d.id)).toList());
+  }
 }

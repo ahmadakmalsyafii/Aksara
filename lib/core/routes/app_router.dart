@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 // import '../../views/home_view.dart';
 import '../../views/home/home_page.dart';
-import '../../views/reader_view.dart';
-import '../../views/quiz_view.dart';
-import '../../views/result_view.dart';
+
 
 
 class AppRouter {
