@@ -1,0 +1,17 @@
+{
+  "books": {
+    "matematika_sma10": {
+      "title": "Matematika Kelas 10",
+      "level": "SMA",
+      "coverUrl": "https://example.com/matematika.png",
+      "description": "Buku Matematika",
+      "chapters": {
+        "bab1": {
+          "title": "Pertidaksamaan",
+          "content": "Isi materi bab 1...",
+          "order": 1
+        }
+      }
+    }
+  }
+}
