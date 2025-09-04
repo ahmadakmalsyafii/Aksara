@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class CustomNavbar extends StatelessWidget {
+class CustomTopNavbar extends StatelessWidget {
   final String username;
   final int streak;
 
-  const CustomNavbar({super.key, required this.username, required this.streak});
+  const CustomTopNavbar({super.key, required this.username, required this.streak});
 
   @override
   Widget build(BuildContext context) {

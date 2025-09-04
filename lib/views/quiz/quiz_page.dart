@@ -1,3 +1,4 @@
+import 'package:aksara/services/user_stats_service.dart';
 import 'package:flutter/material.dart';
 import '../../models/chapter_model.dart';
 import '../../models/quiz_model.dart';
@@ -19,6 +20,8 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   final QuizService quizService = QuizService();
+  final StatsService statsService = StatsService();
+
   late List<QuizModel> quizzes;
   Map<int, String> answers = {};
   bool loading = false;
@@ -50,6 +53,9 @@ class _QuizPageState extends State<QuizPage> {
 
     final score = (correct / quizzes.length * 100).round();
     print("✅ Score: $score, akan hapus quiz untuk chapter ${widget.chapter.id}");
+    if(score >= 60){
+      await statsService.addPoints(500);
+    }
 
     // hapus quiz di Firestore
     await quizService.deleteQuiz(widget.chapter.id);

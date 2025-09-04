@@ -1,3 +1,4 @@
+import 'package:aksara/services/user_stats_service.dart';
 import 'package:flutter/material.dart';
 import 'package:aksara/models/chapter_model.dart';
 import 'package:aksara/models/quiz_model.dart';
@@ -20,6 +21,7 @@ class _ChapterContentPageState extends State<ChapterContentPage> {
   final GeminiService gemini = GeminiService();
   final QuizService quizService = QuizService();
   final ProgressService progressService = ProgressService();
+  final StatsService statsService = StatsService();
 
   bool loading = false;
   bool generating = true;
@@ -35,6 +37,7 @@ class _ChapterContentPageState extends State<ChapterContentPage> {
     _splitContent();
     _prepareQuiz();
     _loadReadingProgress();
+    statsService.recordDailyRead();
   }
 
   void _splitContent() {

@@ -1,12 +1,17 @@
 import 'package:aksara/models/book_model.dart';
+import 'package:aksara/models/user_model.dart';
 import 'package:aksara/services/book_service.dart';
+import 'package:aksara/services/user_service.dart';
+import 'package:aksara/services/user_stats_service.dart';
 import 'package:aksara/views/auth/login_page.dart';
 import 'package:aksara/views/book/book_detail_page.dart';
+import 'package:aksara/views/history/history_page.dart';
+import 'package:aksara/views/saloka/saloka_page.dart';
 import 'package:aksara/views/search/search_page.dart';
 import 'package:aksara/widgets/block_category.dart';
 import 'package:aksara/widgets/book_card_wide.dart';
 import 'package:aksara/widgets/custom_buttom_navbar.dart';
-import 'package:aksara/widgets/custom_navbar.dart';
+import 'package:aksara/widgets/custom_top_navbar.dart';
 import 'package:aksara/widgets/home_banner.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aksara/services/auth_service.dart';
@@ -25,25 +30,43 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  String username = "User";
+  int streak = 0;
+
 
   void _onNavTapped(int index) {
     setState(() {
       _selectedIndex = index;
       // TODO: Navigasi ke halaman lain berdasarkan index
       // contoh: if (index == 1) Navigator.push(... RiwayatPage());
-      // if (index == 1) {
-      //   Navigator.push(
-      //     context,
-      //     MaterialPageRoute(builder: (_) => ()),
-      //   );
-      // }
+      if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => HistoryPage()),
+        );
+      } else if(index == 1){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => SalokaPage()),
+        );
+      }
     });
   }
 
 
   final bookService = BookService();
   final AuthService authService = AuthService();
-  User? user = FirebaseAuth.instance.currentUser;
+  final StatsService stats = StatsService();
+  final UserService userService = UserService();
+
+  Future<Map<String, dynamic>> _fetchUserData() async {
+    final dataStats = await stats.getStats();
+    final userData = await userService.getCurrentUser();
+    return {
+      "username": userData?.username ?? "User",
+      "streak": dataStats?['streak'] ?? 0,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +96,23 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomNavbar(username: "${user?.email ?? 'User'}" , streak: 10),
+              FutureBuilder<Map<String, dynamic>>(
+                future: _fetchUserData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData) {
+                    return const Text("Gagal memuat data");
+                  }
+
+                  final userData = snapshot.data!;
+                  return CustomTopNavbar(
+                    username: userData["username"],
+                    streak: userData["streak"],
+                  );
+                },
+              ),
               SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(

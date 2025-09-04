@@ -1,9 +1,20 @@
+import 'package:aksara/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserService {
   final _db = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+
+  Future<UserModel?> getCurrentUser() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+
+    final doc = await _db.collection('users').doc(user.uid).get();
+    if (!doc.exists) return null;
+
+    return UserModel.fromMap(doc.data()!);
+  }
 
   Future<void> addPoints(int points) async {
     final uid = _auth.currentUser?.uid;
