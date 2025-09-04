@@ -75,11 +75,12 @@ class BookCardWide extends StatelessWidget {
                     spacing: 6,
                     runSpacing: -6,
                     children: book.kategori.map((tag) {
-                      return Chip(
-                        label: Text(tag),
+                      return Chip(shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(50)),
+                        label: Text(tag, style: TextStyle(color: Colors.white),),
                         materialTapTargetSize:
                         MaterialTapTargetSize.shrinkWrap,
                         visualDensity: VisualDensity.compact,
+                        backgroundColor: Colors.blue,
                       );
                     }).toList(),
                   ),

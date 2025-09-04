@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
 import '../../services/auth_service.dart';
 import '../../services/book_repository.dart';
-import '../../services/progress_repository.dart';
+import '../../services/progress_service.dart';
 import '../../services/gemini_service.dart';
 import '../../services/quiz_repository.dart';
 

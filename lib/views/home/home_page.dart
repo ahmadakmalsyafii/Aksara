@@ -92,12 +92,12 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      isScrollControlled: true, // biar bisa full screen
-                      backgroundColor: Colors.transparent, // transparan biar ga ada border aneh
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
                       builder: (context) {
                         return DraggableScrollableSheet(
                           expand: false,
-                          initialChildSize: 0.95, // hampir full screen
+                          initialChildSize: 0.95,
                           maxChildSize: 0.95,
                           minChildSize: 0.95,
                           builder: (_, controller) => const SearchPage(),

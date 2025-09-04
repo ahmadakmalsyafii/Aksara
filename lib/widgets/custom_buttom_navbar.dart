@@ -34,22 +34,22 @@ class CustomBottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
             currentIndex == 1
-                ? "assets/icons/riwayat_active.svg"
-                : "assets/icons/riwayat_inactive.svg",
-            width: 28,
-            height: 28,
-          ),
-          label: "Riwayat",
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            currentIndex == 2
                 ? "assets/icons/saloka_active.svg"
                 : "assets/icons/saloka_inactive.svg",
             width: 28,
             height: 28,
           ),
           label: "Saloka",
+        ),
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            currentIndex == 2
+                ? "assets/icons/riwayat_active.svg"
+                : "assets/icons/riwayat_inactive.svg",
+            width: 28,
+            height: 28,
+          ),
+          label: "Riwayat",
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
