@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aksara/themes/app_theme.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 
 void main() async {
@@ -16,6 +17,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await initializeDateFormatting('id_ID', null);
 
   runApp(const MyApp());
 }

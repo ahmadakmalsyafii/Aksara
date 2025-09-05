@@ -1,9 +1,11 @@
 // main_page.dart
+import 'package:aksara/views/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:aksara/views/home/home_page.dart';
 import 'package:aksara/views/saloka/saloka_page.dart';
 import 'package:aksara/views/history/history_page.dart';
 import 'package:aksara/widgets/custom_buttom_navbar.dart';
+
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -19,7 +21,7 @@ class _MainPageState extends State<MainPage> {
     const HomePage(),
     const SalokaPage(),
     const HistoryPage(),
-    // Tambahkan halaman profil di sini jika ada
+    const ProfilePage(),
   ];
 
   void _onNavTapped(int index) {

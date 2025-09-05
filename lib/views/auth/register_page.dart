@@ -30,7 +30,12 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 80),
+              const SizedBox(height: 48),
+              Container(
+                alignment: Alignment.center,
+                child: Image.asset('assets/images/aksara_icon.png'),
+              ),
+              const SizedBox(height: 40),
               const Text("Daftarkan Akun",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               const Text("Daftarkan akun Anda untuk mulai belajar"),

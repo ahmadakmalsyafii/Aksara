@@ -28,7 +28,12 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 80),
+              const SizedBox(height: 48),
+              Container(
+                alignment: Alignment.center,
+                child: Image.asset('assets/images/aksara_icon.png'),
+              ),
+              const SizedBox(height: 40),
               const Text("Selamat Datang!",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               const Text("Masuk ke akun Anda untuk mulai belajar"),

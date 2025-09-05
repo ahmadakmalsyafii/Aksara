@@ -16,6 +16,10 @@ class UserService {
     return UserModel.fromMap(doc.data()!);
   }
 
+  Future<void> updateUserData(UserModel user) async {
+    await _db.collection("users").doc(user.uid).set(user.toMap(), SetOptions(merge: true));
+  }
+
   Future<void> addPoints(int points) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
@@ -26,7 +30,6 @@ class UserService {
       final snapshot = await transaction.get(userRef);
 
       if (!snapshot.exists) {
-        // Kalau user belum ada di Firestore, buat dulu
         transaction.set(userRef, {
           'points': points,
           'email': _auth.currentUser?.email,

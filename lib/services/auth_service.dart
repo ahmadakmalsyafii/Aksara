@@ -86,6 +86,24 @@ class AuthService {
       return null;
     }
   }
+  
+  Future<bool> changePassword({required String currentPassword, required String newPassword}) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null || user.email == null) return false;
+
+      // Re-autentikasi pengguna
+      AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: currentPassword);
+      await user.reauthenticateWithCredential(credential);
+
+      // Jika berhasil, ubah kata sandi
+      await user.updatePassword(newPassword);
+      return true;
+    } catch (e) {
+      print("Change password error: $e");
+      return false;
+    }
+  }
 
   // Logout
   Future<void> signOut() async {
