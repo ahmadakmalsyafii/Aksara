@@ -2,12 +2,13 @@ class UserModel {
   final String uid;
   final String username;
   final String email;
-  // final num streak;
+  final List<String> bookmarks;
 
   UserModel({
     required this.uid,
     required this.username,
     required this.email,
+    this.bookmarks = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -15,6 +16,7 @@ class UserModel {
       'uid': uid,
       'username': username,
       'email': email,
+      'bookmarks': bookmarks,
     };
   }
 
@@ -23,6 +25,7 @@ class UserModel {
       uid: map['uid'],
       username: map['username'],
       email: map['email'],
+      bookmarks: List<String>.from(map['bookmarks'] ?? []),
     );
   }
 }

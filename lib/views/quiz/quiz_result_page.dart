@@ -26,10 +26,10 @@ class QuizResultPage extends StatelessWidget {
         ? "assets/images/result_quiz_mascot.png"
         : "assets/images/result_quiz_failed_mascot.png";
 
-    final String titleText = isPassed ? "Yayy, Selamat!" : "Mohon Maaf, Coba Lagi";
+    final String titleText = isPassed ? "Yayy, Selamat!" : "Masih Bisa Lebih Baik!";
     final String subtitleText = isPassed
         ? "Kamu telah menyelesaikan quiz dengan baik!"
-        : "Jangan menyerah, coba lagi sampai kamu berhasil!";
+        : "Skormu masih rendah, yuk coba lagi untuk hasil lebih baik!";
 
     return Scaffold(
       body: Padding(
@@ -41,7 +41,7 @@ class QuizResultPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 56),
                     Image.asset(imagePath, width: double.infinity,),
                     const SizedBox(height: 16),
                     Text(
@@ -71,7 +71,7 @@ class QuizResultPage extends StatelessWidget {
                             color: Color(0xFF338EC6),
                           ),
                         ),
-                        Text("$accuracy%", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text("$accuracy%", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF24658D))),
                       ],
                     ),
                     const SizedBox(height: 8),

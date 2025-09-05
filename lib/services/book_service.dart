@@ -25,30 +25,30 @@ class BookService {
 
 
   Future<List<BookModel>> searchBooks(String query) async {
-    if (query.isEmpty) {
-      final snapshot = await _bookRef.get();
-      return snapshot.docs
-          .map((doc) =>
-          BookModel.fromJson(doc.data() as Map<String, dynamic>, doc.id))
-          .toList();
-    }
-
-    final snapshot = await _bookRef
-        .where("judul", isGreaterThanOrEqualTo: query)
-        .where("judul", isLessThanOrEqualTo: "$query\uf8ff")
-        .get();
-
-    return snapshot.docs
+    final snapshot = await _bookRef.get();
+    final allBooks = snapshot.docs
         .map((doc) =>
         BookModel.fromJson(doc.data() as Map<String, dynamic>, doc.id))
         .toList();
-  }
 
+    if (query.isEmpty) {
+      return allBooks;
+    }
 
+    final lowerCaseQuery = query.toLowerCase();
 
-  Future<List<BookModel>> getBooksAll() async {
-    final snapshot = await _db.collection('books').get();
-    return snapshot.docs.map((doc) => BookModel.fromJson(doc.data() as Map<String, dynamic>, doc.id)).toList();
+    return allBooks.where((book) {
+      final bookTitle = book.judul.toLowerCase();
+      if (bookTitle.contains(lowerCaseQuery)) {
+        return true;
+      }
+
+      final hasMatchingCategory = book.kategori.any((category) {
+        return category.toLowerCase().contains(lowerCaseQuery);
+      });
+
+      return hasMatchingCategory;
+    }).toList();
   }
 
 

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:aksara/services/bookmark_service.dart';
 import 'package:aksara/services/history_service.dart';
 import 'package:flutter/material.dart';
 import 'package:aksara/models/book_model.dart';
@@ -7,7 +8,9 @@ import 'package:aksara/views/chapter/chapter_page.dart';
 
 class BookDetailPage extends StatelessWidget {
   final BookModel book;
-  const BookDetailPage({super.key, required this.book});
+  final BookmarkService _bookmarkService = BookmarkService();
+
+  BookDetailPage({super.key, required this.book});
 
 
   @override
@@ -18,9 +21,33 @@ class BookDetailPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.bookmark_border),
-            onPressed: () {},
+          StreamBuilder<bool>(
+            stream: _bookmarkService.isBookmarked(book.id),
+            builder: (context, snapshot) {
+              final isBookmarked = snapshot.data ?? false;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                      color: isBookmarked ? Theme.of(context).primaryColor : Colors.grey,
+                    ),
+                    onPressed: () {
+                      if (isBookmarked) {
+                        _bookmarkService.removeBookmark(book.id);
+                      } else {
+                        _bookmarkService.addBookmark(book.id);
+                      }
+                    },
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -163,9 +190,9 @@ class BookDetailPage extends StatelessWidget {
                 ),
               ),
               onPressed: () async {
-                await historyService.saveHistory(
+                await historyService.saveOrUpdateHistory(
                   bookId: book.id,
-                  chapterId: 'mulai_baca',
+                  chapterId: '-',
                   score: 0,
                 );
 

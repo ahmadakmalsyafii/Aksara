@@ -2,6 +2,7 @@
 
 import 'package:aksara/models/chapter_model.dart';
 import 'package:aksara/models/quiz_model.dart';
+import 'package:aksara/services/history_service.dart';
 import 'package:aksara/services/quiz_service.dart';
 import 'package:aksara/services/user_stats_service.dart';
 import 'package:aksara/views/quiz/quiz_result_page.dart';
@@ -12,11 +13,13 @@ import 'package:flutter/material.dart';
 class QuizPage extends StatefulWidget {
   final ChapterModel chapter;
   final List<QuizModel> quizzes;
+  final String bookId;
 
   const QuizPage({
     super.key,
     required this.chapter,
     required this.quizzes,
+    required this.bookId
   });
 
   @override
@@ -26,6 +29,7 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   final QuizService quizService = QuizService();
   final StatsService statsService = StatsService();
+  final HistoryService historyService = HistoryService();
 
   int _currentQuestionIndex = 0;
   int? _selectedOptionIndex;
@@ -82,8 +86,17 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
+
   void _navigateToResultPage() async {
     final score = (_correctAnswers.length / widget.quizzes.length * 100).round();
+
+    // PERUBAHAN: Panggil saveHistory sebelum navigasi
+    await historyService.saveOrUpdateHistory(
+      bookId: widget.bookId,
+      chapterId: widget.chapter.id,
+      score: score,
+    );
+
     if (score >= 60) {
       await statsService.addPoints(500);
     }
@@ -134,6 +147,7 @@ class _QuizPageState extends State<QuizPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Quiz"),
+        backgroundColor: Colors.transparent,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
           child: LinearProgressIndicator(

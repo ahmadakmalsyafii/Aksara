@@ -79,7 +79,7 @@ class ChapterPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ChapterContentPage(chapter: chapterItem),
+                              builder: (_) => ChapterContentPage(chapter: chapterItem, bookId: book.id,),
                             ),
                           );
                         },
