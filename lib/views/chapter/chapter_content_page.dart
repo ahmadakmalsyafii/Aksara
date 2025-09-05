@@ -57,7 +57,7 @@ class _ChapterContentPageState extends State<ChapterContentPage> {
   }
 
   void _splitContent() {
-    const chunkSize = 6;
+    const chunkSize = 600;
     final text = widget.chapter.konten;
     if (text.isEmpty) {
       pages.add("Konten bab ini kosong.");
@@ -149,7 +149,6 @@ class _ChapterContentPageState extends State<ChapterContentPage> {
       appBar: AppBar(
         title: Text("BAB ${widget.chapter.order}: ${widget.chapter.judulBab}"),
       ),
-      // PERUBAHAN: Mengganti Stack dengan Scaffold dan FloatingActionButton
       body: Column(
         children: [
           Expanded(
@@ -163,16 +162,45 @@ class _ChapterContentPageState extends State<ChapterContentPage> {
                 progressService.saveProgress(widget.chapter.id, index);
               },
               itemBuilder: (context, index) {
-                return SingleChildScrollView( // Menambahkan scroll untuk konten yang panjang
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    pages[index],
-                    style: const TextStyle(fontSize: 16, height: 1.5),
-                  ),
+                // DIUBAH: Menggunakan Stack untuk menumpuk tombol
+                return Stack(
+                  children: [
+                    // Konten Teks
+                    SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 80), // Beri ruang di bawah untuk tombol
+                      child: Text(
+                        pages[index],
+                        style: const TextStyle(fontSize: 16, height: 1.5),
+                      ),
+                    ),
+                    // Tombol Kuis (hanya muncul di halaman terakhir)
+                    if (index == pages.length - 1)
+                      Positioned(
+                        bottom: 16,
+                        right: 16,
+                        child: ElevatedButton(
+                          onPressed: generating ? null : _navigateToQuiz,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(16),
+                            backgroundColor: Colors.white,
+                          ),
+                          child: generating
+                              ? SvgPicture.asset(
+                            'assets/icons/ai_icon.svg',
+                            // Cara yang benar untuk memberi warna pada SVG
+                            colorFilter: const ColorFilter.mode(
+                                Colors.grey, BlendMode.srcIn),
+                          )
+                              : SvgPicture.asset('assets/icons/ai_icon.svg'),
+                        ),
+                      ),
+                  ],
                 );
               },
             ),
           ),
+          // Indikator Halaman (tetap di bawah)
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -205,20 +233,6 @@ class _ChapterContentPageState extends State<ChapterContentPage> {
             ),
           ),
         ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton:  Visibility(
-        visible: currentPage == pages.length - 1,
-        child: FloatingActionButton(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-          onPressed: generating ? null : _navigateToQuiz,
-          child: generating
-              ? SvgPicture.asset('assets/icons/ai_icon.svg', color: Colors.grey,)
-              : SvgPicture.asset('assets/icons/ai_icon.svg'),
-        ),
       ),
     );
   }

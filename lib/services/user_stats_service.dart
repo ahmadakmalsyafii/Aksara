@@ -108,4 +108,19 @@ class StatsService {
     // Menggunakan FieldValue.increment dengan nilai negatif untuk mengurangi poin
     await ref.update({'points': FieldValue.increment(-amount)});
   }
+
+  Stream<Map<String, dynamic>> getStatsStream() {
+    final user = _auth.currentUser;
+    if (user == null) return Stream.value({});
+
+    final ref = _db
+        .collection('users')
+        .doc(user.uid)
+        .collection('stats')
+        .doc('stats');
+    return ref.snapshots().map((snap) {
+      if (!snap.exists) return {'points': 0, 'streak': 0};
+      return snap.data() ?? {'points': 0, 'streak': 0};
+    });
+  }
 }

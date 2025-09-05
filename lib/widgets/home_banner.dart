@@ -31,7 +31,7 @@ class HomeBanner extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  "Nunggin Kamu!",
+                  "Nungguin Kamu!",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.normal,

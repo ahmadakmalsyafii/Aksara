@@ -29,7 +29,7 @@ class BookDetailPage extends StatelessWidget {
             if (userPoints >= 2000) {
               await _statsService.deductPoints(2000);
               await _unlockService.unlockBook(book.id);
-              Navigator.of(context).pop(); // Tutup bottom sheet
+              Navigator.of(context).pop();
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -205,7 +205,7 @@ class BookDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
-            ), // biar ga ketutup tombol
+            ),
           ],
         ),
       ),
@@ -222,9 +222,8 @@ class BookDetailPage extends StatelessWidget {
 
               final unlockedBooks = unlockedSnapshot.data ?? [];
               final isBookUnlocked = unlockedBooks.contains(book.id);
-              final isBookFree = book.level == 'Basic';
+              final isBookFree = book.level.toLowerCase() == 'basic';
 
-              // Buku dapat diakses jika gratis ATAU sudah di-unlock
               final canAccess = isBookFree || isBookUnlocked;
 
               return SizedBox(

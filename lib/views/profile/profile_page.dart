@@ -1,5 +1,6 @@
 // lib/views/profile/profile_page.dart
 
+import 'package:aksara/models/history_model.dart';
 import 'package:aksara/models/user_model.dart';
 import 'package:aksara/services/auth_service.dart';
 import 'dart:collection';
@@ -98,56 +99,60 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
 
-  Future<Map<String, dynamic>> _fetchProfileData() async {
-    final user = await _userService.getCurrentUser();
-    final stats = await _statsService.getStats();
-    final history = await _historyService.getHistory();
-    final booksRead = HashSet<String>.from(history.map((h) => h.bookId)).length;
-
-    return {
-      'user': user,
-      'points': stats?['points'] ?? 0,
-      'streak': stats?['streak'] ?? 0,
-      'booksRead': booksRead,
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: _fetchProfileData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text("Gagal memuat data profil"));
-          }
+      body: StreamBuilder<UserModel?>(
+        stream: _userService.getCurrentUserStream(),
+        builder: (context, userSnapshot) {
+          return StreamBuilder<Map<String, dynamic>>(
+            stream: _statsService.getStatsStream(),
+            builder: (context, statsSnapshot) {
+              return StreamBuilder<List<HistoryModel>>(
+                stream: _historyService.getHistoryStream(),
+                builder: (context, historySnapshot) {
+                  if (!userSnapshot.hasData ||
+                      !statsSnapshot.hasData ||
+                      !historySnapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-          final data = snapshot.data!;
-          final UserModel? user = data['user'];
-          final int points = data['points'];
-          final int streak = data['streak'];
-          final int booksRead = data['booksRead'];
+                  final UserModel? user = userSnapshot.data;
+                  final stats = statsSnapshot.data!;
+                  final history = historySnapshot.data!;
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              setState(() {});
+                  final int points = stats['points'] ?? 0;
+                  final int streak = stats['streak'] ?? 0;
+                  final int booksRead =
+                      HashSet<String>.from(history.map((h) => h.bookId))
+                          .length;
+
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() {});
+                    },
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(16, 60, 16, 24),
+                      children: [
+                        ProfileHeader(user: user),
+                        const SizedBox(height: 20),
+                        StatsCard(
+                            points: points,
+                            streak: streak,
+                            booksRead: booksRead),
+                        const SizedBox(height: 24),
+                        AccountSettingsCard(
+                            onProfileEdited: () => setState(() {})),
+                        const SizedBox(height: 16),
+                        GeneralSettingsCard(
+                            onLogout: () =>
+                                _showLogoutConfirmationBottomSheet(context)),
+                      ],
+                    ),
+                  );
+                },
+              );
             },
-            // Menggunakan ListView untuk menghindari overflow
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 60, 16, 24),
-              children: [
-                ProfileHeader(user: user),
-                const SizedBox(height: 20),
-                StatsCard(points: points, streak: streak, booksRead: booksRead),
-                const SizedBox(height: 24),
-                AccountSettingsCard(onProfileEdited: () => setState(() {})),
-                const SizedBox(height: 16),
-                GeneralSettingsCard(onLogout: () => _showLogoutConfirmationBottomSheet(context)),
-              ],
-            ),
           );
         },
       ),

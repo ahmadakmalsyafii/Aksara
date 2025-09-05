@@ -17,6 +17,17 @@ class UserService {
     return UserModel.fromMap(doc.data()!);
   }
 
+  Stream<UserModel?> getCurrentUserStream() {
+    final user = _auth.currentUser;
+    if (user == null) return Stream.value(null);
+
+    return _db
+        .collection('users')
+        .doc(user.uid)
+        .snapshots()
+        .map((doc) => doc.exists ? UserModel.fromMap(doc.data()!) : null);
+  }
+
   Future<void> updateUserData(UserModel user) async {
     await _db.collection("users").doc(user.uid).set(user.toMap(), SetOptions(merge: true));
   }
