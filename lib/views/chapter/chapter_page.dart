@@ -1,3 +1,5 @@
+// lib/views/chapter/chapter_page.dart
+
 import 'package:aksara/services/chapter_service.dart';
 import 'package:aksara/views/chapter/chapter_content_page.dart';
 import 'package:flutter/material.dart';
@@ -7,44 +9,89 @@ import 'package:aksara/widgets/chapter_card.dart';
 
 class ChapterPage extends StatelessWidget {
   final BookModel book;
-  final ChapterService chapter = ChapterService();
+  final ChapterService chapterService = ChapterService();
 
   ChapterPage({super.key, required this.book});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(book.judul)),
-      body: FutureBuilder<List<ChapterModel>>(
-        future: chapter.getChapters(book.id!), // ambil bab dari Firestore
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("Belum ada bab tersedia"));
-          }
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.black,
+        // Tombol kembali standar
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Judul buku
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                book.judul,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
+            ),
 
-          final chapters = snapshot.data!;
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: chapters.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              return ChapterCard(
-                chapter: chapters[index],
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChapterContentPage(chapter: chapters[index]),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
+            FutureBuilder<List<ChapterModel>>(
+              future: chapterService.getChapters(book.id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text("Terjadi kesalahan: ${snapshot.error}"));
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text("Belum ada bab untuk buku ini."));
+                }
+
+                final chapters = snapshot.data!;
+
+                // Container putih yang ukurannya mengikuti konten
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  child: ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                    itemCount: chapters.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    separatorBuilder: (_, __) => const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+                      final chapterItem = chapters[index];
+                      return ChapterCard(
+                        chapter: chapterItem,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChapterContentPage(chapter: chapterItem),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 24), // Memberi jarak di bagian bawah
+          ],
+        ),
       ),
     );
   }

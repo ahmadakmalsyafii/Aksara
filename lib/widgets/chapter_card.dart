@@ -1,3 +1,5 @@
+// lib/widgets/chapter_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:aksara/models/chapter_model.dart';
 
@@ -13,18 +15,29 @@ class ChapterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        title: Text(
-          chapter.judulBab,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+    // Menggunakan ListTile secara langsung untuk tampilan yang bersih
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      title: Text(
+        'BAB ${chapter.order}: ${chapter.judulBab}',
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
         ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: onTap,
       ),
+      trailing: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: const BoxDecoration(
+          color: Colors.blue,
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          Icons.chevron_right,
+          color: Colors.white,
+          size: 20,
+        ),
+      ),
+      onTap: onTap,
     );
   }
 }

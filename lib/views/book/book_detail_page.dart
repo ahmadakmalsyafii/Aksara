@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:aksara/services/history_service.dart';
 import 'package:flutter/material.dart';
 import 'package:aksara/models/book_model.dart';
 import 'package:aksara/views/chapter/chapter_page.dart';
@@ -6,11 +9,14 @@ class BookDetailPage extends StatelessWidget {
   final BookModel book;
   const BookDetailPage({super.key, required this.book});
 
+
   @override
   Widget build(BuildContext context) {
+    final HistoryService historyService = HistoryService();
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(book.judul),
+        backgroundColor: Colors.transparent,
         actions: [
           IconButton(
             icon: const Icon(Icons.bookmark_border),
@@ -19,89 +25,126 @@ class BookDetailPage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(bottom: 80),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cover
-            Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  book.coverUrl,
-                  height: 200,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: double.infinity,
+            SizedBox(
+              height: 300,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(book.coverUrl, fit: BoxFit.cover),
+                  ClipRRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(color: Colors.black.withOpacity(0.2)),
+                    ),
+                  ),
+                  Center(
+                    child: SizedBox(
                       height: 200,
-                      color: Colors.grey.shade300,
-                      child: const Icon(Icons.broken_image),
-                    );
-                  },
-                ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(book.coverUrl),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(book.judul, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      Text(book.penulis, style: TextStyle(fontSize: 12, color: Colors.grey.shade700, )),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
 
-            // Judul & Penulis
-            Text(
-              book.judul,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+                  const Text("Informasi Buku", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8,right: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Penerbit", style: TextStyle(color: Colors.grey.shade600), textAlign: TextAlign.start,),
+                            Text(book.penerbit, style: const TextStyle(fontWeight: FontWeight.w500))
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Tanggal", style: TextStyle(color: Colors.grey.shade600)),
+                            Text("10 April 2025", style: const TextStyle(fontWeight: FontWeight.w500))
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("ISBN", style: TextStyle(color: Colors.grey.shade600)),
+                            Text(book.isbn, style: const TextStyle(fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Halaman", style: TextStyle(color: Colors.grey.shade600)),
+                            Text(book.isbn, style: const TextStyle(fontWeight: FontWeight.w500)),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  // Anda bisa menambahkan data lain seperti ISBN dan Halaman di sini
+                  const SizedBox(height: 24),
+
+                  // --- Tag ---
+                  const Text("Tag", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: -6,
+                    children: book.kategori.map((tag) {
+                      return Chip(shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(50)),
+                        label: Text(tag, style: TextStyle(color: Colors.white),),
+                        materialTapTargetSize:
+                        MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
+                        backgroundColor: Colors.blue,
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // --- Deskripsi ---
+                  const Text("Deskripsi Buku", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text(
+                    book.deskripsi,
+                    style: TextStyle(color: Colors.grey.shade800, height: 1.5, fontSize: 14),
+                  ),
+                ],
               ),
-            ),
-            if (book.penerbit != null) ...[
-              const SizedBox(height: 4),
-              Text(
-                book.penerbit!,
-                style: const TextStyle(color: Colors.black54),
-              ),
-            ],
-
-            const SizedBox(height: 20),
-
-            // Informasi Buku
-            const Text(
-              "Informasi Buku",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Penerbit: ${book.penerbit}"),
-                Text("Tahun: ${book.tahun}"),
-              ],
-            ),
-            // if (book.isbn != null) Text("ISBN: ${book.isbn}"),
-            // if (book.halaman != null) Text("${book.halaman} halaman"),
-
-            const SizedBox(height: 16),
-
-            // Tag
-            Wrap(
-              spacing: 8,
-              children: book.kategori.map((tag) {
-                return Chip(
-                  label: Text(tag),
-                  backgroundColor: Colors.blue.shade50,
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Deskripsi
-            const Text(
-              "Deskripsi Buku",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            // Text(book.deskripsi ?? "-"),
-
-            const SizedBox(height: 80), // biar ga ketutup tombol
+            ), // biar ga ketutup tombol
           ],
         ),
       ),
@@ -119,16 +162,25 @@ class BookDetailPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChapterPage(book: book),
-                  ),
+              onPressed: () async {
+                await historyService.saveHistory(
+                  bookId: book.id,
+                  chapterId: 'mulai_baca',
+                  score: 0,
                 );
+
+                // Arahkan ke halaman daftar bab
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChapterPage(book: book),
+                    ),
+                  );
+                }
               },
               child: const Text(
-                "Baca sekarang",
+                "Baca Sekarang",
                 style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w900),
               ),
             ),

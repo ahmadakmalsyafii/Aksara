@@ -68,7 +68,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
             ),
             const SizedBox(height: 12),
 
-            // Filter Row (icon + chips)
             Row(
               children: [
               GestureDetector(
@@ -118,6 +117,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text("Tidak ada buku ditemukan"));
                   }
+
 
                   var books = snapshot.data!;
                   if (selectedClass != null) {

@@ -1,11 +1,11 @@
 class BookModel {
   final String id;
-  final String penulis;
   final String judul;
   final String penerbit;
   final String tahun;
   final String kelas;
   final String coverUrl;
+  final String penulis;
   final String isbn;
   final String deskripsi;
   final int halaman;

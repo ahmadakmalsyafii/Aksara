@@ -1,3 +1,4 @@
+import 'package:aksara/views/category/list_category_page.dart';
 import 'package:flutter/material.dart';
 
 class BlockCategory extends StatelessWidget {
@@ -16,16 +17,29 @@ class BlockCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: categories.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
-        childAspectRatio: 0.8, // lebih tinggi biar teks muat
-        mainAxisSpacing: 16,   // jarak vertikal antar item
+        childAspectRatio: 0.8,
+        mainAxisSpacing: 16,
         crossAxisSpacing: 12,
       ),
-        itemBuilder: (context, index) {
-          return Column(
+      itemBuilder: (context, index) {
+        final category = categories[index];
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ListCategoryPage(
+                  categoryTitle: category["title"],
+                ),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
@@ -36,35 +50,35 @@ class BlockCategory extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 2,
-                      spreadRadius: 1,
-                      offset: Offset(0, 2),
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
                 child: Center(
                   child: Image.asset(
-                    categories[index]["icon"],
+                    category["icon"],
                     width: 56,
                     height: 56,
                     fit: BoxFit.contain,
                   ),
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Flexible(
-                  child: Text(
-                    categories[index]["title"],
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                child: Text(
+                  category["title"],
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
-          );
-        },
+          ),
+        );
+      },
     );
   }
 }

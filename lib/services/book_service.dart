@@ -14,6 +14,15 @@ class BookService {
         .toList();
   }
 
+  Future<List<BookModel>> getBooksByCategory(String category) async {
+    final snapshot = await _db
+        .collection('books')
+        .where('kategori', arrayContains: category)
+        .get();
+
+    return snapshot.docs.map((doc) => BookModel.fromJson(doc.data(), doc.id)).toList();
+  }
+
 
   Future<List<BookModel>> searchBooks(String query) async {
     if (query.isEmpty) {

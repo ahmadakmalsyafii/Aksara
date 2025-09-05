@@ -13,6 +13,7 @@ import 'package:aksara/widgets/book_card_wide.dart';
 import 'package:aksara/widgets/custom_buttom_navbar.dart';
 import 'package:aksara/widgets/custom_top_navbar.dart';
 import 'package:aksara/widgets/home_banner.dart';
+import 'package:aksara/widgets/last_read_secation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aksara/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -29,29 +30,8 @@ class HomePage extends StatefulWidget {
 
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
   String username = "User";
   int streak = 0;
-
-
-  void _onNavTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      // TODO: Navigasi ke halaman lain berdasarkan index
-      // contoh: if (index == 1) Navigator.push(... RiwayatPage());
-      if (index == 2) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => HistoryPage()),
-        );
-      } else if(index == 1){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => SalokaPage()),
-        );
-      }
-    });
-  }
 
 
   final bookService = BookService();
@@ -71,24 +51,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Beranda", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await authService.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginPage()),
-              );
-            },
-          )
-        ],
-      ),
       body:
       Padding(
         padding: const EdgeInsets.all(16.0),
@@ -96,6 +58,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 40,),
               FutureBuilder<Map<String, dynamic>>(
                 future: _fetchUserData(),
                 builder: (context, snapshot) {
@@ -176,14 +139,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 16),
               Text("Mata Pelajaran, Nih", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
               BlockCategory(),
-              SizedBox(height: 20),
+              SizedBox(height: 16),
               HomeBanner(),
+              LastReadSection(),
               Text("Cocok Buat Kamu", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
+              SizedBox(height: 8),
               FutureBuilder<List<BookModel>>(
                 future: bookService.getAllBooks(),
                 builder: (context, snapshot) {

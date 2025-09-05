@@ -17,7 +17,7 @@ class GeminiService {
 
   Future<List<QuizModel>> generateQuiz(String material) async {
     final prompt = """
-    Buatkan 3 soal pilihan ganda tentang materi ini: $material.
+    Buatkan 5 soal pilihan ganda tentang materi ini: $material.
     Format output HARUS JSON valid tanpa tambahan apapun:
     {
       "quiz": [

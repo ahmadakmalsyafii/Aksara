@@ -17,4 +17,13 @@ class ChapterService {
         .toList();
   }
 
+  Future<int> getChaptersCount(String bookId) async {
+    final snapshot = await _db
+        .collection('books')
+        .doc(bookId)
+        .collection('chapters')
+        .get();
+    return snapshot.docs.length;
+  }
+
 }
