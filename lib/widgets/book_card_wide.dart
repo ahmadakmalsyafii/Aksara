@@ -80,7 +80,7 @@ class BookCardWide extends StatelessWidget {
                         materialTapTargetSize:
                         MaterialTapTargetSize.shrinkWrap,
                         visualDensity: VisualDensity.compact,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Color(0xff338EC6),
                       );
                     }).toList(),
                   ),

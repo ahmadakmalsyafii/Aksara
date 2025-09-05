@@ -11,6 +11,7 @@ class BookModel {
   final int halaman;
   final int harga;
   final List<String> kategori;
+  final String level;
 
   BookModel({
     required this.id,
@@ -25,7 +26,7 @@ class BookModel {
     required this.halaman,
     required this.penulis,
     required this.kategori,
-
+    required this.level,
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json, String id) {
@@ -42,6 +43,7 @@ class BookModel {
       isbn: json['isbn'] ?? '',
       deskripsi: json['deskripsi'] ?? '',
       kategori: List<String>.from(json['kategori'] ?? []),
+      level: json['level'] ?? 'Basic',
     );
   }
 
@@ -58,6 +60,7 @@ class BookModel {
       'halaman': halaman,
       'penulis': penulis,
       'kategori': kategori,
+      'level': level,
     };
   }
 }

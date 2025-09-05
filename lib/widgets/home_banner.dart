@@ -56,7 +56,7 @@ class HomeBanner extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Colors.blue,
+                      color: Color(0xff338EC6),
                     ),
                   ),
                 ),

@@ -1,11 +1,10 @@
+// lib/views/auth/login_page.dart
 import 'package:aksara/views/auth/lupa_password_page.dart';
 import 'package:aksara/widgets/google_button.dart';
-import 'package:aksara/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:aksara/services/auth_service.dart';
 import 'package:aksara/views/auth/register_page.dart';
 import 'package:aksara/widgets/custom_textfield.dart';
-import 'package:aksara/widgets/custom_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,6 +17,57 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final authService = AuthService();
+  bool _isButtonEnabled = false;
+  bool _isLoading = false;
+  bool _loginFailed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController.addListener(_validateFields);
+    passwordController.addListener(_validateFields);
+  }
+
+  @override
+  void dispose() {
+    emailController.removeListener(_validateFields);
+    passwordController.removeListener(_validateFields);
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void _validateFields() {
+    setState(() {
+      _isButtonEnabled =
+          emailController.text.isNotEmpty && passwordController.text.isNotEmpty;
+    });
+  }
+
+  void _loginUser() async {
+    setState(() {
+      _isLoading = true;
+      _loginFailed = false;
+    });
+    var user = await authService.loginWithEmail(
+      emailController.text,
+      passwordController.text,
+    );
+    if (mounted) {
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login berhasil!")),
+        );
+      } else {
+        setState(() {
+          _loginFailed = true;
+        });
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +84,32 @@ class _LoginPageState extends State<LoginPage> {
                 child: Image.asset('assets/images/aksara_icon.png'),
               ),
               const SizedBox(height: 40),
+              if (_loginFailed)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.red.shade200),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.red),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          "Login gagal. Periksa kembali email dan kata sandi Anda.",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               const Text("Selamat Datang!",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               const Text("Masuk ke akun Anda untuk mulai belajar"),
+
               const SizedBox(height: 20),
               CustomTextField(
                 hint: "E-mail",
@@ -57,25 +130,32 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) =>  ForgotPasswordPage()),
+                      MaterialPageRoute(
+                          builder: (_) => const LupaPasswordPage()),
                     );
                   },
                   child: const Text("Lupa Kata Sandi?"),
                 ),
               ),
-              PrimaryButton(
-                text: "Masuk",
-                onPressed: () async {
-                  var user = await authService.loginWithEmail(
-                    emailController.text,
-                    passwordController.text,
-                  );
-                  if (user != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Login berhasil!")),
-                    );
-                  }
-                },
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  backgroundColor: _isButtonEnabled
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey,
+                ),
+                onPressed:
+                _isButtonEnabled ? (_isLoading ? null : _loginUser) : null,
+                child: Text(
+                  _isLoading ? "Masuk..." : "Masuk",
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                   )
                 ],
               ),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
@@ -102,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    padding: EdgeInsets.symmetric(horizontal: 24.0),
                     child: Text(
                       "Atau dengan",
                       style: TextStyle(color: Colors.black),
@@ -116,15 +196,22 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-              SizedBox(height:20,),
+              const SizedBox(
+                height: 20,
+              ),
               GoogleButton(
                 text: "Masuk dengan Google",
                 onPressed: () async {
                   var user = await authService.signInWithGoogle();
-                  if (user != null) {
+                  if (user != null && mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Login dengan Google berhasil!")),
+                      const SnackBar(
+                          content: Text("Login dengan Google berhasil!")),
                     );
+                  } else {
+                    setState(() {
+                      _loginFailed = true;
+                    });
                   }
                 },
               )

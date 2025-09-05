@@ -38,7 +38,47 @@ class AuthService {
     }
   }
 
+  Future<bool> checkIfEmailInUse(String email) async {
+    try {
+      final snapshot = await _db
+          .collection("users")
+          .where("email", isEqualTo: email)
+          .limit(1)
+          .get();
+      return snapshot.docs.isNotEmpty;
+    } on FirebaseAuthException catch (e) {
+      // Menangani error lain jika perlu
+      print(e);
+      return false;
+    }
+  }
 
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
+  Future<bool> resetPassword(String email, String newPassword) async {
+    try {
+      final snapshot = await _db
+          .collection("users")
+          .where("email", isEqualTo: email)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        String userId = snapshot.docs.first.id;
+        print(
+            "Di aplikasi production, panggil Cloud Function untuk mereset password user $userId");
+        // Simulasi berhasil
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error resetting password: $e");
+      return false;
+    }
+  }
 
   // Login dengan email & password
   Future<User?> loginWithEmail(String email, String password) async {
@@ -58,18 +98,21 @@ class AuthService {
   Future<User?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
 
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
+      UserCredential userCredential =
+      await _auth.signInWithCredential(credential);
       User? user = userCredential.user;
 
       if (user != null) {
-        DocumentSnapshot snapshot = await _db.collection("users").doc(user.uid).get();
+        DocumentSnapshot snapshot =
+        await _db.collection("users").doc(user.uid).get();
         if (!snapshot.exists) {
           UserModel newUser = UserModel(
             uid: user.uid,
@@ -86,14 +129,16 @@ class AuthService {
       return null;
     }
   }
-  
-  Future<bool> changePassword({required String currentPassword, required String newPassword}) async {
+
+  Future<bool> changePassword(
+      {required String currentPassword, required String newPassword}) async {
     try {
       final user = _auth.currentUser;
       if (user == null || user.email == null) return false;
 
       // Re-autentikasi pengguna
-      AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: currentPassword);
+      AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!, password: currentPassword);
       await user.reauthenticateWithCredential(credential);
 
       // Jika berhasil, ubah kata sandi

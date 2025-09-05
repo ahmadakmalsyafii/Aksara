@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:aksara/views/coming_soon_page.dart';
 import 'package:flutter/material.dart';
 import 'package:aksara/models/book_model.dart';
 
@@ -38,10 +39,10 @@ class BookDetailSalokaPage extends StatelessWidget {
                   ),
                   Center(
                     child: SizedBox(
-                      height: 200,
+                      height: 176,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(book.coverUrl),
+                        child: Image.network(book.coverUrl, fit: BoxFit.fill,),
                       ),
                     ),
                   ),
@@ -141,7 +142,9 @@ class BookDetailSalokaPage extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () { /* Logika beli sekarang */ },
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_)=> ComingSoonPage(title: '')));
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

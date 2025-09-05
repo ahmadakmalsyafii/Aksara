@@ -132,7 +132,11 @@ class _ReadHistoryTabState extends State<ReadHistoryTab> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade400),
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(50)),
+                            child: Icon(Icons.arrow_forward_ios, size: 12, color: Colors.white),
+                          )
                         ],
                       ),
                     ),

@@ -1,3 +1,4 @@
+// lib/services/user_stats_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -7,13 +8,17 @@ class StatsService {
 
   String _dateOnlyString(DateTime dt) {
     final d = dt.toUtc();
-    return '${d.year.toString().padLeft(4,'0')}-${d.month.toString().padLeft(2,'0')}-${d.day.toString().padLeft(2,'0')}';
+    return '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
   }
 
   Future<void> recordDailyRead({int streakIncrementIfNewDay = 1}) async {
     final user = _auth.currentUser;
     if (user == null) return;
-    final ref = _db.collection('users').doc(user.uid).collection('stats').doc('stats');
+    final ref = _db
+        .collection('users')
+        .doc(user.uid)
+        .collection('stats')
+        .doc('stats');
 
     await _db.runTransaction((tx) async {
       final snapshot = await tx.get(ref);
@@ -39,7 +44,8 @@ class StatsService {
       try {
         final last = DateTime.tryParse(lastRead);
         if (last != null) {
-          final yesterday = DateTime.now().toUtc().subtract(const Duration(days: 1));
+          final yesterday =
+          DateTime.now().toUtc().subtract(const Duration(days: 1));
           final yesterdayStr = _dateOnlyString(yesterday);
           if (lastRead == yesterdayStr) {
             // lanjut streak
@@ -66,7 +72,11 @@ class StatsService {
   Future<void> addPoints(int amount) async {
     final user = _auth.currentUser;
     if (user == null) return;
-    final ref = _db.collection('users').doc(user.uid).collection('stats').doc('stats');
+    final ref = _db
+        .collection('users')
+        .doc(user.uid)
+        .collection('stats')
+        .doc('stats');
     await ref.set({
       'points': FieldValue.increment(amount),
       'updatedAt': FieldValue.serverTimestamp(),
@@ -76,9 +86,26 @@ class StatsService {
   Future<Map<String, dynamic>?> getStats() async {
     final user = _auth.currentUser;
     if (user == null) return null;
-    final ref = _db.collection('users').doc(user.uid).collection('stats').doc('stats');
+    final ref = _db
+        .collection('users')
+        .doc(user.uid)
+        .collection('stats')
+        .doc('stats');
     final snap = await ref.get();
-    if (!snap.exists) return null;
+    if (!snap.exists) return {'points': 0, 'streak': 0};
     return snap.data();
+  }
+
+  Future<void> deductPoints(int amount) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    final ref = _db
+        .collection('users')
+        .doc(user.uid)
+        .collection('stats')
+        .doc('stats');
+
+    // Menggunakan FieldValue.increment dengan nilai negatif untuk mengurangi poin
+    await ref.update({'points': FieldValue.increment(-amount)});
   }
 }

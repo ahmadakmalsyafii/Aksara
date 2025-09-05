@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:aksara/services/bookmark_service.dart';
 import 'package:aksara/services/history_service.dart';
+import 'package:aksara/services/unlock_service.dart';
+import 'package:aksara/services/user_stats_service.dart';
+import 'package:aksara/widgets/unlock_book_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:aksara/models/book_model.dart';
 import 'package:aksara/views/chapter/chapter_page.dart';
@@ -9,8 +12,41 @@ import 'package:aksara/views/chapter/chapter_page.dart';
 class BookDetailPage extends StatelessWidget {
   final BookModel book;
   final BookmarkService _bookmarkService = BookmarkService();
+  final UnlockService _unlockService = UnlockService();
+  final StatsService _statsService = StatsService();
 
   BookDetailPage({super.key, required this.book});
+
+  void _showUnlockPopup(BuildContext context, int userPoints) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent, // Membuat latar belakang transparan
+      isScrollControlled: true,
+      builder: (context) {
+        return UnlockBookPopup(
+          userPoints: userPoints,
+          onUnlock: () async {
+            if (userPoints >= 2000) {
+              await _statsService.deductPoints(2000);
+              await _unlockService.unlockBook(book.id);
+              Navigator.of(context).pop(); // Tutup bottom sheet
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ChapterPage(book: book),
+                ),
+              );
+            } else {
+              Navigator.of(context).pop(); // Tutup bottom sheet
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Poin kamu tidak cukup!')),
+              );
+            }
+          },
+        );
+      },
+    );
+  }
 
 
   @override
@@ -70,10 +106,10 @@ class BookDetailPage extends StatelessWidget {
                   ),
                   Center(
                     child: SizedBox(
-                      height: 200,
+                      height: 176,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(book.coverUrl),
+                        child: Image.network(book.coverUrl, fit: BoxFit.fitHeight),
                       ),
                     ),
                   ),
@@ -86,7 +122,7 @@ class BookDetailPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(book.judul, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
@@ -120,7 +156,7 @@ class BookDetailPage extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    padding: const EdgeInsets.only(bottom: 8,right: 32),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -143,8 +179,6 @@ class BookDetailPage extends StatelessWidget {
                   ),
                   // Anda bisa menambahkan data lain seperti ISBN dan Halaman di sini
                   const SizedBox(height: 24),
-
-                  // --- Tag ---
                   const Text("Tag", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Wrap(
@@ -156,7 +190,7 @@ class BookDetailPage extends StatelessWidget {
                         materialTapTargetSize:
                         MaterialTapTargetSize.shrinkWrap,
                         visualDensity: VisualDensity.compact,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Color(0xff338EC6),
                       );
                     }).toList(),
                   ),
@@ -176,41 +210,67 @@ class BookDetailPage extends StatelessWidget {
         ),
       ),
 
-      // Tombol melayang di bawah
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
-              onPressed: () async {
-                await historyService.saveOrUpdateHistory(
-                  bookId: book.id,
-                  chapterId: '-',
-                  score: 0,
-                );
+          child: StreamBuilder<List<String>>(
+            stream: _unlockService.getUnlockedBooksStream(),
+            builder: (context, unlockedSnapshot) {
+              if (unlockedSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                // Arahkan ke halaman daftar bab
-                if (context.mounted) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChapterPage(book: book),
+              final unlockedBooks = unlockedSnapshot.data ?? [];
+              final isBookUnlocked = unlockedBooks.contains(book.id);
+              final isBookFree = book.level == 'Basic';
+
+              // Buku dapat diakses jika gratis ATAU sudah di-unlock
+              final canAccess = isBookFree || isBookUnlocked;
+
+              return SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: !canAccess
+                      ? const Icon(Icons.lock, color: Colors.white)
+                      : const Icon(Icons.menu_book, color: Colors.white),
+                  label: Text(
+                    !canAccess ? "Buka Buku (2000 Poin)" : "Baca Sekarang",
+                    style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                  );
-                }
-              },
-              child: const Text(
-                "Baca Sekarang",
-                style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w900),
-              ),
-            ),
+                  ),
+                  onPressed: () async {
+                    if (canAccess) {
+                      await historyService.saveOrUpdateHistory(
+                        bookId: book.id,
+                        chapterId: '-',
+                        score: 0,
+                      );
+                      if (context.mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChapterPage(book: book),
+                          ),
+                        );
+                      }
+                    } else {
+                      // Jika tidak bisa akses, tunjukkan popup
+                      final statsData = await _statsService.getStats();
+                      final userPoints = statsData?['points'] ?? 0;
+                      _showUnlockPopup(context, userPoints);
+                    }
+                  },
+                ),
+              );
+            },
           ),
         ),
       ),
