@@ -19,7 +19,7 @@ class ComingSoonPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/cry_mascot.png', // Pastikan path gambar benar
+              'assets/images/cry_mascot.png',
               height: 200,
             ),
             const SizedBox(height: 20),

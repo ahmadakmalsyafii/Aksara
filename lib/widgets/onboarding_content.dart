@@ -48,8 +48,6 @@ class OnboardingContent extends StatelessWidget {
             color: Colors.grey.shade600,
           ),
         ),
-        // Mungkin perlu spacer jika ada elemen lain di bawahnya dan ingin teks berada di tengah
-        // const Spacer(),
       ],
     );
   }

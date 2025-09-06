@@ -63,7 +63,7 @@ class _LastReadSectionState extends State<LastReadSection> {
             ),
             const SizedBox(height: 10),
             BookCardWide(book: lastBook),
-            const SizedBox(height: 20), // Jarak ke bagian selanjutnya
+            const SizedBox(height: 20),
           ],
         );
       },

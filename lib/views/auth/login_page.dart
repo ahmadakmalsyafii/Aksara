@@ -1,4 +1,5 @@
 // lib/views/auth/login_page.dart
+import 'package:aksara/main.dart';
 import 'package:aksara/views/auth/lupa_password_page.dart';
 import 'package:aksara/widgets/google_button.dart';
 import 'package:flutter/material.dart';
@@ -55,8 +56,10 @@ class _LoginPageState extends State<LoginPage> {
     );
     if (mounted) {
       if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login berhasil!")),
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const AuthWrapper()),
+              (route) => false,
         );
       } else {
         setState(() {
@@ -68,6 +71,28 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
+
+
+  void _googleSignIn() async {
+    setState(() => _isLoading = true);
+    var user = await authService.signInWithGoogle();
+    if (mounted) {
+      if (user != null) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const AuthWrapper()),
+              (route) => false,
+        );
+      } else {
+        setState(() {
+          _loginFailed = true;
+        });
+      }
+      setState(() => _isLoading = false);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -201,19 +226,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               GoogleButton(
                 text: "Masuk dengan Google",
-                onPressed: () async {
-                  var user = await authService.signInWithGoogle();
-                  if (user != null && mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Login dengan Google berhasil!")),
-                    );
-                  } else {
-                    setState(() {
-                      _loginFailed = true;
-                    });
-                  }
-                },
+                onPressed: _isLoading ? () {} : _googleSignIn,
               )
             ],
           ),

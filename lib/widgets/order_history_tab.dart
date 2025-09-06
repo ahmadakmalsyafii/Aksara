@@ -12,7 +12,7 @@ class OrdersHistoryTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset('assets/images/cry_mascot.png', height: 200), // Ganti dengan gambar yang sesuai
+          Image.asset('assets/images/cry_mascot.png', height: 200),
           const SizedBox(height: 16),
           const Text("Kamu Belum Pesan Apapun", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -24,8 +24,6 @@ class OrdersHistoryTab extends StatelessWidget {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              // Arahkan ke SalokaPage. Perlu penyesuaian di main navigation Anda.
-              // Untuk sementara, kita push halaman baru.
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SalokaPage()),

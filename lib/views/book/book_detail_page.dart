@@ -20,7 +20,7 @@ class BookDetailPage extends StatelessWidget {
   void _showUnlockPopup(BuildContext context, int userPoints) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent, // Membuat latar belakang transparan
+      backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
         return UnlockBookPopup(
@@ -37,7 +37,7 @@ class BookDetailPage extends StatelessWidget {
                 ),
               );
             } else {
-              Navigator.of(context).pop(); // Tutup bottom sheet
+              Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Poin kamu tidak cukup!')),
               );
@@ -261,7 +261,6 @@ class BookDetailPage extends StatelessWidget {
                         );
                       }
                     } else {
-                      // Jika tidak bisa akses, tunjukkan popup
                       final statsData = await _statsService.getStats();
                       final userPoints = statsData?['points'] ?? 0;
                       _showUnlockPopup(context, userPoints);

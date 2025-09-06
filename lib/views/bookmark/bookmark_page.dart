@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aksara/models/book_model.dart';
 import 'package:aksara/services/bookmark_service.dart';
-import 'package:aksara/widgets/book_card_saloka.dart'; // Kita pakai ulang kartu dari Saloka
+import 'package:aksara/widgets/book_card_saloka.dart';
 
 class BookmarkPage extends StatefulWidget {
   const BookmarkPage({super.key});

@@ -7,12 +7,11 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Simpan data user ke Firestore
+
   Future<void> saveUserData(UserModel user) async {
     await _db.collection("users").doc(user.uid).set(user.toMap());
   }
 
-  // Register dengan email & password
   Future<User?> registerWithEmail(String username, String email, String password) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -70,7 +69,6 @@ class AuthService {
         String userId = snapshot.docs.first.id;
         print(
             "Di aplikasi production, panggil Cloud Function untuk mereset password user $userId");
-        // Simulasi berhasil
         return true;
       }
       return false;
@@ -80,7 +78,7 @@ class AuthService {
     }
   }
 
-  // Login dengan email & password
+
   Future<User?> loginWithEmail(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -136,12 +134,10 @@ class AuthService {
       final user = _auth.currentUser;
       if (user == null || user.email == null) return false;
 
-      // Re-autentikasi pengguna
       AuthCredential credential = EmailAuthProvider.credential(
           email: user.email!, password: currentPassword);
       await user.reauthenticateWithCredential(credential);
 
-      // Jika berhasil, ubah kata sandi
       await user.updatePassword(newPassword);
       return true;
     } catch (e) {

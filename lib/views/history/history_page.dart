@@ -11,7 +11,6 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  // 0 untuk 'Membaca', 1 untuk 'Pesanan'
   int _selectedTab = 0;
 
   @override

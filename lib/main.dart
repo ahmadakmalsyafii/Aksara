@@ -5,7 +5,7 @@ import 'package:aksara/services/user_service.dart';
 import 'package:aksara/views/auth/choose_class_page.dart';
 import 'package:aksara/views/auth/login_page.dart';
 import 'package:aksara/views/main_page.dart';
-import 'package:aksara/views/onboarding/onboarding_page.dart';// Impor SplashScreen
+import 'package:aksara/views/onboarding/onboarding_page.dart';
 import 'package:aksara/views/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,12 +33,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Aksara',
       theme: AppTheme.themeData,
-      home: const SplashScreen(), // SET SEBAGAI HALAMAN PERTAMA
+      home: const SplashScreen(),
     );
   }
 }
 
-// Widget ini akan memutuskan antara menampilkan Onboarding atau AuthWrapper
 class OnboardingOrAuthWrapper extends StatefulWidget {
   const OnboardingOrAuthWrapper({super.key});
 
@@ -73,9 +72,9 @@ class _OnboardingOrAuthWrapperState extends State<OnboardingOrAuthWrapper> {
         } else {
           final bool onboardingCompleted = snapshot.data ?? false;
           if (onboardingCompleted) {
-            return const AuthWrapper(); // Jika sudah, cek status login
+            return const AuthWrapper();
           } else {
-            return const OnboardingPage(); // Jika belum, tampilkan onboarding
+            return const OnboardingPage();
           }
         }
       },

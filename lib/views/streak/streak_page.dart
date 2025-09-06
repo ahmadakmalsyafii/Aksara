@@ -73,7 +73,7 @@ class _StreakPageState extends State<StreakPage> {
           child: Card(
             color: const Color(0xFF338EC6),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            clipBehavior: Clip.antiAlias, // Penting untuk memotong gambar sesuai bentuk kartu
+            clipBehavior: Clip.antiAlias,
             child: Stack(
               children: [
                 // Lapisan Latar Belakang (Gambar)
@@ -118,7 +118,7 @@ class _StreakPageState extends State<StreakPage> {
           child: Card(
             color: Colors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            clipBehavior: Clip.antiAlias, // Penting untuk memotong gambar
+            clipBehavior: Clip.antiAlias,
             child: Stack(
               children: [
 
@@ -146,10 +146,10 @@ class _StreakPageState extends State<StreakPage> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        "Freeze Used",
+                        "Freeze Available",
                         style: TextStyle(color: Color(0xff338EC6), fontWeight: FontWeight.w500),
                       ),
-                      const SizedBox(height: 40), // Beri ruang
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
